@@ -1,0 +1,8 @@
+services:
+  vps-mcp:
+    build: .
+    ports:
+      - "80:80"
+    env_file:
+      - .env
+    restart: unless-stopped
