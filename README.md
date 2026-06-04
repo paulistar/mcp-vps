@@ -14,17 +14,18 @@ Servidor MCP remoto que roda **na VPS** e expõe ferramentas de sistema, arquivo
 | `vps_docker` | ps, logs, restart, compose-up/down, etc. |
 | `vps_systemctl` | status, start, stop, restart de serviços |
 
-## Deploy no Easypanel
+## Deploy no Easypanel (produção)
 
-1. Crie um **App** (Docker) apontando para este repositório
-2. Configure as variáveis de ambiente (copie de `.env.example`):
-   - `MCP_AUTH_TOKEN` — **obrigatório** em produção
-   - `PORT=80`
-3. Exponha a porta 80 com domínio (ex: `vps.martstudiosbr.com.br`)
-4. Teste:
+- **Projeto:** `martstudios`
+- **Serviço:** `mcp-vps`
+- **Repositório:** [github.com/paulistar/mcp-vps](https://github.com/paulistar/mcp-vps)
+- **Domínio:** `https://vps.martstudiosbr.com.br` (porta 80)
+- **Painel:** [painel.martstudiosbr.com.br](https://painel.martstudiosbr.com.br)
+
+Teste:
 
 ```bash
-curl https://mcp.seudominio.com/health
+curl https://vps.martstudiosbr.com.br/health
 ```
 
 Resposta esperada:
