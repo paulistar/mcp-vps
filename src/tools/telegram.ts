@@ -2,7 +2,7 @@ import { z } from "zod";
 import type { McpTool } from "../types.js";
 import { formatExecResult, runCommand } from "../utils/exec.js";
 
-const OPS = "node /app/scripts/tg-diretor-ops.js";
+const OPS = "node /app/scripts/tg-diretor-ops.cjs";
 
 async function runOps(args: string, timeoutMs = 120000) {
   return runCommand(`${OPS} ${args}`, { timeoutMs });
