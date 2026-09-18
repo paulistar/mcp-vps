@@ -11,7 +11,8 @@ COPY tsconfig.json ./
 COPY src ./src
 COPY scripts ./scripts
 
-RUN npm run build
+RUN npm run build \
+ && ln -sf /app/scripts/tg-diretor-ops.cjs /app/scripts/tg-diretor-ops.js
 
 EXPOSE 80
 
