@@ -19,10 +19,25 @@ const tgStatusTool: McpTool = {
   },
 };
 
+const tgNotifyTool: McpTool = {
+  name: "tg_diretor_notify",
+  description:
+    "Aviso ops via Bot API sendMessage direto (sem gateway OpenClaw). Usar quando gateway pode estar degradado. Não cria turn do agent. Preferir isto a tg_diretor_send para alertas.",
+  schema: {
+    message: z.string().min(1).describe("Texto do aviso ops no DM do Diretor"),
+  },
+  handler: async (args) => {
+    const message = String((args as { message: string }).message);
+    const escaped = message.replace(/'/g, "'\\''");
+    const result = await runOps(`notify '${escaped}'`, 60000);
+    return { content: [{ type: "text", text: formatExecResult(result) }] };
+  },
+};
+
 const tgSendTool: McpTool = {
   name: "tg_diretor_send",
   description:
-    "Envia mensagem no DM Telegram do Renato (chat 137339320) via @mart_diretor_bot / OpenClaw. Não espere o usuário — use para probes e avisos ops.",
+    "Envia via canal OpenClaw (message send) no DM 137339320. Preferir tg_diretor_notify para alertas ops; use send quando quiser delivery pelo plugin/canal.",
   schema: {
     message: z.string().min(1).describe("Texto a enviar no DM do Diretor"),
   },
@@ -94,6 +109,7 @@ const tgSmokeTool: McpTool = {
 
 export default [
   tgStatusTool,
+  tgNotifyTool,
   tgSendTool,
   tgHistoryTool,
   tgInboundTool,
