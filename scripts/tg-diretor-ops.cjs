@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
- * tg-diretor-ops — send/read/smoke Telegram Diretor via OpenClaw.
+ * tg-diretor-ops — send/read/smoke/notify Telegram Diretor via OpenClaw + Bot API.
  * Secrets: token via docker exec into OpenClaw. Never print token.
- * Usage: node tg-diretor-ops.cjs <status|send|history|smoke|inbound> [...]
+ * Usage: node tg-diretor-ops.cjs <status|send|notify|history|smoke|inbound> [...]
  */
 const { execFileSync, spawnSync } = require("child_process");
 const fs = require("fs");
@@ -159,6 +159,18 @@ async function cmdSend(text) {
   };
 }
 
+/** Bot API only — no OpenClaw gateway (clitrade-style ops notify). */
+async function cmdNotify(text) {
+  if (!text) throw new Error("notify requires message text");
+  const api = await botApi("sendMessage", { chat_id: CHAT_ID, text });
+  return {
+    via: "botapi",
+    ok: !!api.ok,
+    messageId: api.result?.message_id ?? null,
+    description: api.description || null,
+  };
+}
+
 function cmdHistory(limit = 25) {
   const logs = dockerLogs("2h");
   const events = [];
@@ -273,6 +285,9 @@ async function main() {
     case "send":
       out = await cmdSend(rest.join(" ").trim());
       break;
+    case "notify":
+      out = await cmdNotify(rest.join(" ").trim());
+      break;
     case "history":
       out = cmdHistory(Number(rest[0]) || 25);
       break;
@@ -285,7 +300,7 @@ async function main() {
     default:
       out = {
         error:
-          "usage: tg-diretor-ops.cjs status|send <text>|history [n]|inbound [min]|smoke [text]",
+          "usage: tg-diretor-ops.cjs status|send <text>|notify <text>|history [n]|inbound [min]|smoke [text]",
       };
       process.exitCode = 2;
   }
